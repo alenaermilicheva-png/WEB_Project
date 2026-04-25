@@ -22,6 +22,10 @@ def login():
         return redirect("/")
     return render_template('login.html', title='Авторизация', form=form)
 
+@app.route('/profile')
+def profile():
+    return render_template('profile.html', title='Профиль')
+
 
 if __name__ == '__main__':
     db_session.global_init("db/dobro.db")
