@@ -2,19 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet"
-          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-          crossorigin="anonymous">
-    <title>{{ title }}</title>
+    <title>ДоброДело</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 </head>
 <body>
-<header>
-    <h1>ДоброДело</h1>
-    <h4>Делай добро вместе с нами!</h4>
-</header>
-<main role="main" class="container">
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">Добрые дела</a>
+        <div>
+            <a href="/login" class="btn btn-outline-light">Войти</a>
+            <a href="/register" class="btn btn-light">Регистрация</a>
+        </div>
+    </div>
+</nav>
+<main class="container mt-4">
     {% block content %}{% endblock %}
 </main>
 </body>

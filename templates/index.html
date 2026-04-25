@@ -1,11 +1,19 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Благотворительная платформа</title>
-</head>
-<body>
-    <h1>Добро пожаловать!</h1>
-    <p>Платформа для благотворительности: листайте дела, записывайтесь и публикуйте свои предложения.</p>
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-center mb-4">Добрые дела</h1>
+{% if events %}
+{% for event in events %}
+<div class="card mb-3">
+    <div class="card-body">
+        <h4 class="card-title">{{ event.title }}</h4>
+        <p class="card-text">{{ event.description }}</p>
+        <div class="text-muted">
+            <small>{{ event.city }} {{ event.date}}</small>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="alert alert-info">Пока нет событий</div>
+{% endif %}
+{% endblock %}
