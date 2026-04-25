@@ -2,8 +2,9 @@ from flask import Flask, render_template, redirect
 from data.login import LoginForm
 from data import db_session
 from data.models import Event,User
-from flask_login import LoginManager, login_user,logout_user,login_required
+from flask_login import LoginManager, login_user,logout_user,login_required, current_user
 from data.register import RegisterForm
+from data.event_form import EventForm
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
@@ -18,6 +19,26 @@ def index():
     session.close()
     return render_template('index.html', events=events)
 
+
+@app.route('/create_event', methods=['GET', 'POST'])
+@login_required
+def create_event():
+    form = EventForm()
+    if form.validate_on_submit():
+        session = db_session.create_session()
+        event = Event()
+        event.title = form.title.data
+        event.description = form.description.data
+        event.date = form.date.data
+        event.location = form.location.data
+        event.city = form.city.data
+        event.max_volunteers = form.max_volunteers.data
+        event.author_id = current_user.id
+        session.add(event)
+        session.commit()
+        return redirect('/')
+
+    return render_template('create_event.html', title='Создать событие', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -63,6 +84,7 @@ def logout():
     return redirect("/")
 
 @app.route('/profile')
+@login_required
 def profile():
     return render_template('profile.html', title='Профиль')
 
