@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
-<h1 class="text-center mb-4">Добрые дела</h1>
+<h1 class="login">Добрые дела</h1>
+
 {% if events %}
-{% for event in events %}
-<div class="card mb-3">
-    <div class="card-body">
-        <h4 class="card-title">{{ event.title }}</h4>
-        <p class="card-text">{{ event.description }}</p>
-        <div class="text-muted">
-            <small>{{ event.city }} {{ event.date}}</small>
+    {% for event in events %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h4>{{ event.title }}</h4>
+                <p>{{ event.description }}</p>
+                <small>{{ event.city }} | {{ event.date }}</small>
+            </div>
         </div>
-    </div>
-</div>
-{% endfor %}
+    {% endfor %}
 {% else %}
-<div class="alert alert-info">Пока нет событий</div>
+    <div class="alert alert-info">Пока нет событий</div>
 {% endif %}
+
 {% endblock %}

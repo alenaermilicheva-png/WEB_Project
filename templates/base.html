@@ -2,22 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>ДоброДело</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/css/bootstrap.min.css"
-          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Волонтёрское бюро</title>
 </head>
 <body>
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="/">Добрые дела</a>
-        <div>
-            <a href="/login" class="btn btn-outline-light">Войти</a>
-            <a href="/register" class="btn btn-light">Регистрация</a>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">Волонтёрское бюро</a>
+            <div>
+                {% if current_user.is_authenticated %}
+                    <a href="/profile" class="btn btn-outline-light">Профиль</a>
+                    <a href="/logout" class="btn btn-light">Выйти</a>
+                {% else %}
+                    <a href="/login" class="btn btn-outline-light">Войти</a>
+                    <a href="/register" class="btn btn-light">Регистрация</a>
+                {% endif %}
+            </div>
         </div>
-    </div>
-</nav>
-<main class="container mt-4">
-    {% block content %}{% endblock %}
-</main>
+    </nav>
+
+    <main class="container mt-4">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
 </body>
 </html>
