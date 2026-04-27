@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, jsonify
 from data.login import LoginForm
 from data import db_session
 from data.models import Event,User
@@ -96,6 +96,45 @@ def profile():
 def load_user(user_id):
     session = db_session.create_session()
     return session.get(User, user_id)
+
+
+@app.route('/event_detail/<int:event_id>')
+def event_detail(event_id):
+    session = db_session.create_session()
+    event = session.query(Event).get(event_id)
+    already_joined = False
+    if current_user.is_authenticated:
+        from data.models import Response
+        already_joined = session.query(Response).filter_by(
+            event_id=event_id,
+            user_id=current_user.id
+        ).first() is not None
+    session.close()
+    if event is None:
+        return redirect('/')
+    return render_template('event_detail.html', title='Детали события', event=event, already_joined=already_joined)
+
+@app.route('/join_event/<int:event_id>', methods=['POST'])
+@login_required
+def join_event(event_id):
+    from data.models import Response
+    session = db_session.create_session()
+    event = session.query(Event).get(event_id)
+    if not event:
+        return jsonify({'success': False, 'error': 'Событие не найдено'})
+    existing = session.query(Response).filter_by(
+        event_id=event_id,
+        user_id=current_user.id
+    ).first()
+    if existing:
+        return jsonify({'success': False, 'error': 'Вы уже записаны на это событие'})
+    current_count = session.query(Response).filter_by(event_id=event_id).count()
+    if current_count >= event.max_volunteers:
+        return jsonify({'success': False, 'error': 'Количество волонтёров уже набрано'})
+    response = Response(event_id=event_id, user_id=current_user.id)
+    session.add(response)
+    session.commit()
+    return jsonify({'success': True})
 
 if __name__ == '__main__':
     db_session.global_init("db/dobro.db")

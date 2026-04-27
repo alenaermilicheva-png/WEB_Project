@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Кнопка назад -->
+            <div class="mb-3">
+                <a href="/" class="btn btn-outline-dark">
+                    <i class="fas fa-arrow-left me-2"></i> Назад к событиям
+                </a>
+            </div>
+
+            <!-- Карточка события -->
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <div class="border-bottom pb-3 mb-3">
+                        <h1 class="h2 mb-0">{{ event.title }}</h1>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <i class="far fa-calendar-alt me-2 text-dark"></i>
+                                <strong>Дата:</strong> {{ event.date.strftime('%d.%m.%Y') }}
+                            </div>
+                            <div class="mb-2">
+                                <i class="fas fa-clock me-2 text-dark"></i>
+                                <strong>Время:</strong> {{ event.date.strftime('%H:%M') }}
+                            </div>
+                            <div class="mb-2">
+                                <i class="fas fa-map-marker-alt me-2 text-dark"></i>
+                                <strong>Место:</strong> {{ event.location }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <i class="fas fa-city me-2 text-dark"></i>
+                                <strong>Город:</strong> {{ event.city }}
+                            </div>
+                            <div class="mb-2">
+                                <i class="fas fa-users me-2 text-dark"></i>
+                                <strong>Нужно волонтёров:</strong> {{ event.max_volunteers }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="h5 mb-3">Описание события</h4>
+                        <p class="text-muted">{{ event.description }}</p>
+                    </div>
+
+                    {% if current_user.is_authenticated %}
+                        <button class="btn btn-dark btn-lg w-100" id="joinEventBtn" 
+                                {% if already_joined %}disabled{% endif %}>
+                            <i class="fas fa-hand-peace me-2"></i>
+                            {% if already_joined %}
+                                 Вы уже записаны на это событие
+                            {% else %}
+                                 Хочу участвовать!
+                            {% endif %}
+                        </button>
+                    {% else %}
+                        <a href="/login" class="btn btn-dark btn-lg w-100">
+                            <i class="fas fa-sign-in-alt me-2"></i> Войдите, чтобы записаться
+                        </a>
+                    {% endif %}
+
+                    <div class="alert alert-info mt-4 mb-0" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>
+                        После записи на событие с вами свяжется организатор для уточнения деталей.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if current_user.is_authenticated and not already_joined %}
+<script>
+document.getElementById('joinEventBtn')?.addEventListener('click', function() {
+    fetch('/join_event/{{ event.id }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.error || 'Ошибка при записи');
+        }
+    })
+    .catch(error => {
+        alert('Ошибка соединения с сервером');
+    });
+});
+</script>
+{% endif %}
+{% endblock %}
