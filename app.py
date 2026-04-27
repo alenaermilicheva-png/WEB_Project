@@ -86,7 +86,11 @@ def logout():
 @app.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html', title='Профиль')
+    session = db_session.create_session()
+    user = session.query(User).filter(User.id == current_user.id).first()
+    events = session.query(Event).filter(Event.author_id == user.id).all()
+    session.close()
+    return render_template('profile.html', title='Профиль', user=user, events=events)
 
 @login_manager.user_loader
 def load_user(user_id):
