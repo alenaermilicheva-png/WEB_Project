@@ -10,14 +10,17 @@ def main():
 
     events_data = [{"title": "Уборка парка", "description": "Поможем убрать мусор в парке",
                     "date": datetime.datetime(2026, 5, 15, 10, 0),
-                    "location": "Парк победы", "city": "Тольятти", "author_id": user.id},
+                    "location": "Парк победы", "city": "Тольятти", "author_id": user.id,
+                    "max_volunteers": 10},
                    {"title": "Помощь приюту для животных", "description": "Выгул собак и уборка вольеров",
                     "date": datetime.datetime(2026, 5, 20, 14, 0),
                     "location": "Приют",
-                    "city": "Москва", "author_id": user.id},
+                    "city": "Москва", "author_id": user.id,
+                    "max_volunteers": 10},
                    {"title": "Посадка деревьев", "description": "Озеленение района",
                     "date": datetime.datetime(2026, 5, 25, 9, 0),
-                    "location": "Сквер", "city": "Санкт-Петербург", "author_id": user.id}]
+                    "location": "Сквер", "city": "Санкт-Петербург", "author_id": user.id,
+                    "max_volunteers": 10}]
 
     for event_data in events_data:
         event = Event()
@@ -27,6 +30,7 @@ def main():
         event.location = event_data["location"]
         event.city = event_data["city"]
         event.author_id = event_data["author_id"]
+        event.max_volunteers = event_data["max_volunteers"]
         db_sess.add(event)
 
     db_sess.commit()

@@ -2,7 +2,7 @@ import sqlalchemy
 from .db_session import SqlAlchemyBase
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-
+import datetime
 
 class User(SqlAlchemyBase, UserMixin):
     __tablename__ = 'users'
@@ -13,6 +13,7 @@ class User(SqlAlchemyBase, UserMixin):
     email = sqlalchemy.Column(sqlalchemy.String, index=True, unique=True, nullable=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     city = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    created_at = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
@@ -30,6 +31,7 @@ class Event(SqlAlchemyBase):
     location = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     city = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     author_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"), nullable=False)
+    max_volunteers = sqlalchemy.Column(sqlalchemy.Integer, default=10)
 
 
 class Response(SqlAlchemyBase):
@@ -37,3 +39,4 @@ class Response(SqlAlchemyBase):
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"), nullable=False)
     event_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("events.id"), nullable=False)
+    status = sqlalchemy.Column(sqlalchemy.String, default='confirmed')

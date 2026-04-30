@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, jsonify
+from flask import Flask, render_template, redirect, jsonify,request
 from data.login import LoginForm
 from data import db_session
 from data.models import Event,User
@@ -14,10 +14,22 @@ login_manager.login_view = 'login'
 
 @app.route('/')
 def index():
+    city_filter = request.args.get('city', '')
+    search_query = request.args.get('search', '')
+    sort_by = request.args.get('sort', 'date')
     session = db_session.create_session()
-    events = session.query(Event).all()
+    query = session.query(Event)
+    if search_query:
+        query = query.filter((Event.title.contains(search_query)) | (Event.description.contains(search_query)))
+    if city_filter:
+        query = query.filter(Event.city == city_filter)
+    query = query.order_by(Event.date)
+    events = query.all()
+    cities = session.query(Event.city).distinct().all()
+    cities = [c[0] for c in cities]
     session.close()
-    return render_template('index.html', events=events)
+    return render_template('index.html', events=events, cities=cities, current_city=city_filter,
+                           search_query=search_query)
 
 
 @app.route('/create_event', methods=['GET', 'POST'])
@@ -100,11 +112,12 @@ def load_user(user_id):
 
 @app.route('/event_detail/<int:event_id>')
 def event_detail(event_id):
+    from data.models import Response
     session = db_session.create_session()
-    event = session.query(Event).get(event_id)
+    event = session.get(Event, event_id)
+    volunteers_count = session.query(Response).filter_by(event_id=event_id).count()
     already_joined = False
     if current_user.is_authenticated:
-        from data.models import Response
         already_joined = session.query(Response).filter_by(
             event_id=event_id,
             user_id=current_user.id
@@ -112,14 +125,14 @@ def event_detail(event_id):
     session.close()
     if event is None:
         return redirect('/')
-    return render_template('event_detail.html', title='Детали события', event=event, already_joined=already_joined)
+    return render_template('event_detail.html', title='Детали события', event=event, already_joined=already_joined,volunteers_count=volunteers_count)
 
 @app.route('/join_event/<int:event_id>', methods=['POST'])
 @login_required
 def join_event(event_id):
     from data.models import Response
     session = db_session.create_session()
-    event = session.query(Event).get(event_id)
+    event = session.get(Event, event_id)
     if not event:
         return jsonify({'success': False, 'error': 'Событие не найдено'})
     existing = session.query(Response).filter_by(
