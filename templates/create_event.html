@@ -26,15 +26,16 @@
         </div>
 
         <div class="mb-3">
-            {{ form.date.label(class="form-label fw-semibold") }}
-            {{ form.date(class="form-control", placeholder="2026-05-15 10:00") }}
-            <small class="text-muted">
-                <i class="fas fa-info-circle me-1"></i>Формат: ГГГГ-ММ-ДД ЧЧ:ММ (например: 2026-05-15 10:00)
-            </small>
-            {% for error in form.date.errors %}
-                <div class="alert alert-danger mt-2">{{ error }}</div>
-            {% endfor %}
-        </div>
+    {{ form.date.label(class="form-label fw-semibold") }}
+    <input type="datetime-local" name="date" class="form-control"
+           value="{{ form.date.data if form.date.data else '' }}">
+    <small class="text-muted">
+        <i class="fas fa-info-circle me-1"></i>Выберите дату и время
+    </small>
+    {% for error in form.date.errors %}
+        <div class="alert alert-danger mt-2">{{ error }}</div>
+    {% endfor %}
+</div>
 
         <div class="mb-3">
             {{ form.location.label(class="form-label fw-semibold") }}

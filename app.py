@@ -41,7 +41,9 @@ def create_event():
         event = Event()
         event.title = form.title.data
         event.description = form.description.data
-        event.date = form.date.data
+        from datetime import datetime
+        date_str = form.date.data
+        event.date = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
         event.location = form.location.data
         event.city = form.city.data
         event.max_volunteers = form.max_volunteers.data
