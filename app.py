@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, jsonify,request
+from flask import Flask, render_template, redirect, jsonify,request,flash
 from data.login import LoginForm
 from data import db_session
 from data.models import Event,User
@@ -61,6 +61,8 @@ def login():
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
+        else:
+            flash('Неверный email или пароль', 'danger')
     return render_template('login.html', title='Авторизация', form=form)
 
 
